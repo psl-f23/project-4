@@ -9,6 +9,14 @@ import pandas as pd
 from by_genre import top_movies_in_genre
 
 
+@st.cache_data
+def get_movie_image(movie_id):
+    """
+    Returns the image of a movie given its movie_id
+    """
+    return f"https://liangfgithub.github.io/MovieImages/{movie_id}.jpg?raw=true"
+
+
 def main():
     st.title("Project 4: Movie Recommender")
 
@@ -43,7 +51,19 @@ def main():
         ):
             st.write(f"Getting the top {selected_top_n} movies in {selected_genre}")
             top_movies = top_movies_in_genre(selected_genre, n=selected_top_n)
-            st.write(top_movies)
+
+            # For each movie in top_movies dataframe, get the image and display it
+            movie_urls = top_movies.apply(
+                lambda row: get_movie_image(row["movie_id"]), axis=1
+            ).to_list()
+
+            movie_captions = top_movies.apply(
+                lambda row: row["title"], axis=1
+            ).to_list()
+
+            # TODO: this creates the grid, but streamlit doesn't have nice APIs to set the gap or anything like that so we
+            # may need a more custom / iterative solution using columns and containers
+            st.image(movie_urls, caption=movie_captions, use_column_width=True)
 
     elif selected_recommender == "Recommendations by Ratings":
         st.header("Recommendations by Ratings")

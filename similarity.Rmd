@@ -1,0 +1,30 @@
+---
+title: "p5"
+output: html_document
+date: "2023-12-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("coop")
+
+R = read.csv("data/ratings_norm.csv")
+```
+
+
+```{r}
+R <- R[, -1]
+
+S <- coop::cosine(as.matrix(R), use = "pairwise.complete.obs")
+
+rounded_S <- round(1/2 + 1/2*(S), digits = 7)
+```
+
+
+```{r}
+write.csv(rounded_S, file = "data/similarity.csv")
+```
+

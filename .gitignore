@@ -1,0 +1,5 @@
+__pycache__/
+
+# Files that are too large to store in github without using git Large File Storage
+data/similarity.csv
+data/ratings.csv

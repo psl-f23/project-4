@@ -63,7 +63,7 @@ def main():
 
             # TODO: this creates the grid, but streamlit doesn't have nice APIs to set the gap or anything like that so we
             # may need a more custom / iterative solution using columns and containers
-            st.image(movie_urls, caption=movie_captions, use_column_width=True)
+            st.image(movie_urls, caption=movie_captions)
 
     elif selected_recommender == "Recommendations by Ratings":
         st.header("Recommendations by Ratings")

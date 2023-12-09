@@ -1,4 +1,5 @@
 __pycache__/
+project4/
 
 # Files that are too large to store in github without using git Large File Storage
 data/similarity.csv

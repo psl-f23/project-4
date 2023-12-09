@@ -151,10 +151,9 @@ def main():
         if num_rated >= 10:
             if st.button("Get Recommendations", disabled=num_rated < 10):
                 st.write("Number of movies rated: ", num_rated)
-                # Convert movie_ratings to a dataframe
-                user_ratings = pd.DataFrame.from_dict(
-                    movie_ratings, orient="index", columns=["rating"]
-                )
+                # Convert movie_ratings to a Pandas series
+                user_ratings = pd.Series(movie_ratings)
+
                 # Convert keys to m{movie_id} format
                 user_ratings.index = user_ratings.index.map(lambda x: f"m{x}")
                 recommendations = myIBCF(newuser=user_ratings)

@@ -5,6 +5,7 @@ import streamlit as st
 movies_with_ratings_count = pd.read_csv("data/movies_with_ratings_count.csv")
 
 similarity_top_30 = pd.read_csv("data/similarity_top_30.csv")
+similarity_top_30.set_index("Unnamed: 0", inplace=True)
 
 
 @st.cache_data
@@ -62,19 +63,23 @@ def myIBCF(newuser, similarity_matrix=similarity_top_30):
     movie_keys = similarity_matrix.keys()
 
     # newuser is a dataframe with movie_ids as index and ratings as values
-    # For any key not in newuser, set the value to NaN
+    # For any key not in newuser, add the key with value np.nan
     for key in movie_keys:
+        # Exclude Unnamed: 0 key
         if key not in newuser.index:
-            newuser[key] = np.nan
+            newuser.loc[key] = np.nan
 
     not_rated_indices = []
-    for index in newuser.index:
-        if np.isnan(newuser[index]):
+    # Loop through the newuser Series
+    for index, value in newuser.iteritems():
+        # If the value is np.nan, append the index to not_rated_indices
+        if np.isnan(value):
             not_rated_indices.append(index)
+
     df_not_rated = pd.DataFrame(index=not_rated_indices, columns=["Value"])
 
     for l in df_not_rated.index:
-        Sl = S_top30.loc[l].dropna()
+        Sl = similarity_matrix.loc[l].dropna()
 
         movie_score_num = 0
         movie_score_denom = 0

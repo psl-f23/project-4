@@ -6,7 +6,7 @@ Here's our first attempt at using data to create a table:
 import streamlit as st
 import pandas as pd
 
-from utilities import top_movies_in_genre, get_random_movies, myIBCF
+from utilities import top_movies_in_genre, get_movies, get_random_movies, myIBCF
 from streamlit_extras.grid import grid
 
 
@@ -18,7 +18,19 @@ def get_movie_image(movie_id):
     return f"https://liangfgithub.github.io/MovieImages/{movie_id}.jpg?raw=true"
 
 
-# Initialize session states
+@st.cache_data
+def list_movie_recommendations(movies):
+    # For each movie in top_movies dataframe, get the image and display it
+    movie_urls = movies.apply(
+        lambda row: get_movie_image(row["movie_id"]), axis=1
+    ).to_list()
+
+    movie_captions = movies.apply(lambda row: row["title"], axis=1).to_list()
+
+    # Define a grid
+    movies_grid = grid([1, 1, 1], gap="medium")
+    for movie_url, movie_caption in zip(movie_urls, movie_captions):
+        movies_grid.image(movie_url, movie_caption, use_column_width=True)
 
 
 def main():
@@ -69,19 +81,21 @@ def main():
             st.write(f"Getting the top {selected_top_n} movies in {selected_genre}")
             top_movies = top_movies_in_genre(selected_genre, n=selected_top_n)
 
-            # For each movie in top_movies dataframe, get the image and display it
-            movie_urls = top_movies.apply(
-                lambda row: get_movie_image(row["movie_id"]), axis=1
-            ).to_list()
+            list_movie_recommendations(top_movies)
 
-            movie_captions = top_movies.apply(
-                lambda row: row["title"], axis=1
-            ).to_list()
+            # # For each movie in top_movies dataframe, get the image and display it
+            # movie_urls = top_movies.apply(
+            #     lambda row: get_movie_image(row["movie_id"]), axis=1
+            # ).to_list()
 
-            # Define a grid
-            movies_grid = grid([1, 1, 1], gap="medium")
-            for movie_url, movie_caption in zip(movie_urls, movie_captions):
-                movies_grid.image(movie_url, movie_caption, use_column_width=True)
+            # movie_captions = top_movies.apply(
+            #     lambda row: row["title"], axis=1
+            # ).to_list()
+
+            # # Define a grid
+            # movies_grid = grid([1, 1, 1], gap="medium")
+            # for movie_url, movie_caption in zip(movie_urls, movie_captions):
+            #     movies_grid.image(movie_url, movie_caption, use_column_width=True)
 
     elif st.session_state.selected_recommender == "Recommendations by Ratings":
         # Infer ratings from session state, key is in format ${movie_id}-rating
@@ -158,6 +172,15 @@ def main():
                 user_ratings.index = user_ratings.index.map(lambda x: f"m{x}")
                 recommendations = myIBCF(newuser=user_ratings)
                 st.table(recommendations)
+
+                # Get movie_ids from recommendations Series (keys), convert from m{movie_id} to {movie_id}
+                movie_ids = recommendations.index.map(lambda x: int(x[1:]))
+
+                # Get movies from movie_ids
+                movies = get_movies(movie_ids)
+                st.table(movies)
+
+                list_movie_recommendations(movies)
 
 
 if __name__ == "__main__":

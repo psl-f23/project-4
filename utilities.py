@@ -26,6 +26,15 @@ def top_movies_in_genre(genre, df=movies_with_ratings_count, n=10) -> pd.DataFra
     return top_movies
 
 
+def get_movies(_movie_ids):
+    """
+    Returns a DataFrame of movies corresponding to the movie_ids
+    """
+    return movies_with_ratings_count[
+        movies_with_ratings_count["movie_id"].isin(_movie_ids)
+    ]
+
+
 def get_random_movies(n=1, excludeList=None):
     """
     Returns n random movies, excluding movie_ids in the exclude list
@@ -71,7 +80,7 @@ def myIBCF(newuser, similarity_matrix=similarity_top_30):
 
     not_rated_indices = []
     # Loop through the newuser Series
-    for index, value in newuser.iteritems():
+    for index, value in newuser.items():
         # If the value is np.nan, append the index to not_rated_indices
         if np.isnan(value):
             not_rated_indices.append(index)

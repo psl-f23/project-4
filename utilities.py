@@ -74,17 +74,13 @@ def myIBCF(newuser, similarity_matrix=similarity_top_30):
     # newuser is a dataframe with movie_ids as index and ratings as values
     # For any key not in newuser, add the key with value np.nan
     for key in movie_keys:
-        # Exclude Unnamed: 0 key
         if key not in newuser.index:
             newuser.loc[key] = np.nan
 
     not_rated_indices = []
-    # Loop through the newuser Series
     for index, value in newuser.items():
-        # If the value is np.nan, append the index to not_rated_indices
         if np.isnan(value):
             not_rated_indices.append(index)
-
     df_not_rated = pd.DataFrame(index=not_rated_indices, columns=["Value"])
 
     for l in df_not_rated.index:
@@ -95,10 +91,7 @@ def myIBCF(newuser, similarity_matrix=similarity_top_30):
         w = newuser
 
         for i in Sl.index:
-            if np.isnan(w[i]):
-                w_i = 0
-            else:
-                w_i = w[i]
+            w_i = 0 if np.isnan(w[i]) else w[i]
             movie_score_num += w_i * Sl[i]
             if w_i != 0:
                 movie_score_denom += Sl[i]

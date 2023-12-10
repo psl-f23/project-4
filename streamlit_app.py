@@ -83,20 +83,6 @@ def main():
 
             list_movie_recommendations(top_movies)
 
-            # # For each movie in top_movies dataframe, get the image and display it
-            # movie_urls = top_movies.apply(
-            #     lambda row: get_movie_image(row["movie_id"]), axis=1
-            # ).to_list()
-
-            # movie_captions = top_movies.apply(
-            #     lambda row: row["title"], axis=1
-            # ).to_list()
-
-            # # Define a grid
-            # movies_grid = grid([1, 1, 1], gap="medium")
-            # for movie_url, movie_caption in zip(movie_urls, movie_captions):
-            #     movies_grid.image(movie_url, movie_caption, use_column_width=True)
-
     elif st.session_state.selected_recommender == "Recommendations by Ratings":
         # Infer ratings from session state, key is in format ${movie_id}-rating
         movie_ratings = {}
@@ -110,17 +96,25 @@ def main():
             [rating for rating in movie_ratings.values() if rating is not None]
         )
 
+        num_to_rate = (
+            10
+            if st.session_state.movies_to_rate is None
+            else len(st.session_state.movies_to_rate)
+        )
+
         st.header("Recommendations by Ratings")
-        if num_rated < 10:
+        if num_rated < num_to_rate:
             st.write(
-                f"Please rate {10 - num_rated} more movies to get movie recommendations"
+                f"Please rate {num_to_rate - num_rated} more movies to get movie recommendations"
             )
         else:
             st.write(
-                "You have rated 10 movies. Click the button below to get recommendations"
+                f"You have rated {num_rated} movies. Click the button below to get recommendations"
             )
 
-        with st.expander(f"Movies Rated ({num_rated})", expanded=num_rated < 10):
+        with st.expander(
+            f"Movies Rated ({num_rated})", expanded=num_rated < num_to_rate
+        ):
 
             @st.cache_data
             def get_initial_movies():
@@ -162,25 +156,41 @@ def main():
                     movie_title = new_movie.iloc[0]["title"]
                     st.rerun()
 
-        if num_rated >= 10:
-            if st.button("Get Recommendations", disabled=num_rated < 10):
+        if num_rated >= num_to_rate:
+            if st.button("Get Recommendations", disabled=num_rated < num_to_rate):
                 st.write("Number of movies rated: ", num_rated)
                 # Convert movie_ratings to a Pandas series
                 user_ratings = pd.Series(movie_ratings)
 
                 # Convert keys to m{movie_id} format
                 user_ratings.index = user_ratings.index.map(lambda x: f"m{x}")
-                recommendations = myIBCF(newuser=user_ratings)
-                st.table(recommendations)
+
+                with st.spinner("Getting recommendations..."):
+                    recommendations = myIBCF(newuser=user_ratings)
+                st.success("Here are your recommendations!")
 
                 # Get movie_ids from recommendations Series (keys), convert from m{movie_id} to {movie_id}
                 movie_ids = recommendations.index.map(lambda x: int(x[1:]))
 
+                recommendations_index_order = recommendations.index.map(
+                    lambda x: int(x[1:])
+                )
+
                 # Get movies from movie_ids
                 movies = get_movies(movie_ids)
-                st.table(movies)
+
+                # Order the movies by the recommendations series keys order
+
+                # movies = movies.reindex(recommendations.index.map(lambda x: str(x[1:])))
 
                 list_movie_recommendations(movies)
+
+                with st.expander("See in table format"):
+                    st.subheader("Recommendations scores")
+                    st.table(recommendations)
+
+                    st.subheader("Recommended movies")
+                    st.table(movies)
 
 
 if __name__ == "__main__":

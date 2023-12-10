@@ -84,6 +84,9 @@ def main():
             list_movie_recommendations(top_movies)
 
     elif st.session_state.selected_recommender == "Recommendations by Ratings":
+        if "movies_to_rate" not in st.session_state:
+            st.session_state.movies_to_rate = None
+
         # Infer ratings from session state, key is in format ${movie_id}-rating
         movie_ratings = {}
         for key in st.session_state.keys():
@@ -119,9 +122,6 @@ def main():
             @st.cache_data
             def get_initial_movies():
                 return get_random_movies(10)
-
-            if "movies_to_rate" not in st.session_state:
-                st.session_state.movies_to_rate = None
 
             if st.session_state.movies_to_rate is None:
                 st.session_state.movies_to_rate = get_initial_movies()
@@ -178,10 +178,6 @@ def main():
 
                 # Get movies from movie_ids
                 movies = get_movies(movie_ids)
-
-                # Order the movies by the recommendations series keys order
-
-                # movies = movies.reindex(recommendations.index.map(lambda x: str(x[1:])))
 
                 list_movie_recommendations(movies)
 

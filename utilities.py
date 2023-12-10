@@ -67,7 +67,7 @@ def get_random_movies(n=1, excludeList=None):
 
 
 @st.cache_data
-def myIBCF(newuser, similarity_matrix=similarity_top_30):
+def myIBCF(newuser, similarity_matrix=similarity_top_30, num_recommendations=10):
     # Get all movie keys from the similarity matrix
     movie_keys = similarity_matrix.keys()
 
@@ -98,4 +98,6 @@ def myIBCF(newuser, similarity_matrix=similarity_top_30):
         if movie_score_denom != 0:
             df_not_rated.loc[l] = movie_score_num / movie_score_denom
 
-    return df_not_rated.sort_values(by="Value", ascending=False).head(10)
+    return df_not_rated.sort_values(by="Value", ascending=False).head(
+        num_recommendations
+    )

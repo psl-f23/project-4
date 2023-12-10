@@ -7436,7 +7436,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8502c740">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=b897da96">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7563,7 +7563,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=ef7d5016">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5df0221e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7591,7 +7591,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f1993ed7">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=16976958">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7867,7 +7867,7 @@ a.anchor-link {
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=82831b9b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=47727c96">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8112,21 +8112,6 @@ write.csv(rounded_S, file = "data/similarity.csv")
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=b1109bca-e526-452f-961b-de211a8a1b2a">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">S_top30</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'data/similarity_top_30.csv'</span><span class="p">)</span>
-<span class="n">S_top30</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"Unnamed: 0"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=9402daed-6409-4a48-8d35-22f65d54ff41">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8135,7 +8120,19 @@ write.csv(rounded_S, file = "data/similarity.csv")
 <div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">myIBCF</span><span class="p">(</span><span class="n">similarity_matrix</span><span class="p">,</span> <span class="n">newuser</span><span class="p">,</span> <span class="n">num_recommendations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">similarity_top_30</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'data/similarity_top_30.csv'</span><span class="p">)</span>
+<span class="n">similarity_top_30</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"Unnamed: 0"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">myIBCF</span><span class="p">(</span><span class="n">newuser</span><span class="p">,</span> <span class="n">similarity_matrix</span><span class="o">=</span><span class="n">similarity_top_30</span><span class="p">,</span> <span class="n">num_recommendations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1"># Get all movie keys from the similarity matrix</span>
+    <span class="n">movie_keys</span> <span class="o">=</span> <span class="n">similarity_matrix</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="c1"># newuser is a dataframe with movie_ids as index and ratings as values</span>
+    <span class="c1"># For any key not in newuser, add the key with value np.nan</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">movie_keys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">newuser</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">newuser</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
     <span class="n">not_rated_indices</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">newuser</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">newuser</span><span class="p">[</span><span class="n">index</span><span class="p">]):</span>
@@ -8143,7 +8140,7 @@ write.csv(rounded_S, file = "data/similarity.csv")
     <span class="n">df_not_rated</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">not_rated_indices</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Value"</span><span class="p">])</span>
 
     <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">df_not_rated</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-        <span class="n">Sl</span> <span class="o">=</span> <span class="n">S_top30</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">Sl</span> <span class="o">=</span> <span class="n">similarity_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
         <span class="n">movie_score_num</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">movie_score_denom</span> <span class="o">=</span> <span class="mi">0</span>
@@ -8173,8 +8170,8 @@ write.csv(rounded_S, file = "data/similarity.csv")
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Test myIBCF function with user u1181</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Top Recommendations for User u1181"</span><span class="p">)</span>
-<span class="n">newuser</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'u1181'</span><span class="p">]</span>
-<span class="n">myIBCF</span><span class="p">(</span><span class="n">S_top30</span><span class="p">,</span> <span class="n">newuser</span><span class="p">)</span>
+<span class="n">user_1181</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'u1181'</span><span class="p">]</span>
+<span class="n">myIBCF</span><span class="p">(</span><span class="n">user_1181</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8255,6 +8252,206 @@ write.csv(rounded_S, file = "data/similarity.csv")
 <tr>
 <th>m1914</th>
 <td>4.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a70d08d7">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Test myIBCF function with user u1351</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Top Recommendations for User u1351"</span><span class="p">)</span>
+<span class="n">user_u1351</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'u1351'</span><span class="p">]</span>
+<span class="n">myIBCF</span><span class="p">(</span><span class="n">user_u1351</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Top Recommendations for User u1351
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>m1901</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m106</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m985</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m1659</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3380</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3373</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3232</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m1780</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m318</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m1877</th>
+<td>5.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=80bec35d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># A hypothetical user who rates movie “m1613” with 5 and movie “m1755” with 4.</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Top Recommendations for Hypothetical User"</span><span class="p">)</span>
+<span class="n">hypothetical_user</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"m1613"</span><span class="p">,</span> <span class="s2">"m1755"</span><span class="p">])</span>
+<span class="n">myIBCF</span><span class="p">(</span><span class="n">hypothetical_user</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Top Recommendations for Hypothetical User
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[ ]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>m3566</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m2771</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m1017</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3157</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3536</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3466</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m340</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m338</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3269</th>
+<td>5.0000000</td>
+</tr>
+<tr>
+<th>m3258</th>
+<td>5.0000000</td>
 </tr>
 </tbody>
 </table>

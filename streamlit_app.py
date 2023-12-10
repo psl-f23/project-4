@@ -58,7 +58,7 @@ def main():
         st.header("Recommendations by Genre")
 
         # Get genre options from genres.csv
-        genre_options = pd.read_csv("data/genres.csv")["Genre"].to_list()
+        genre_options = pd.read_csv("data/genres.csv", header=None)
         selected_genre = st.selectbox(
             "Movie Genre", genre_options, None, placeholder="Select a movie genre"
         )
